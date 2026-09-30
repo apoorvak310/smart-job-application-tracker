@@ -1,7 +1,8 @@
 from database.schema import create_tables
 from repositories.application_repository import (
     add_application as save_application,
-    get_all_applications, update_application_status as update_status_in_db
+    get_all_applications, update_application_status as update_status_in_db,
+    delete_application
 )
 from util.validators import (
     validate_required,
@@ -25,7 +26,8 @@ def show_menu():
     print("2. View Applications")
     print("3. Update Application Status")
     print("4. Exit")
-    print("5. About\n")
+    print("5. Delete Application")
+    print("6. About\n")
 
 def add_application():
     company = input("Enter company name: ").strip()
@@ -140,6 +142,30 @@ def update_application_status():
     else:
         print("Application ID not found.")
 
+def delete_application_cli():
+    applications = get_all_applications()
+    if len(applications) == 0:
+        print("No applications found.")
+        return
+    print("\nApplications:")
+    for application in applications:
+        print(
+            f"ID: {application.id} | "
+            f"Company: {application.company} | "
+            f"Role: {application.role} | "
+            f"Status: {application.status}"
+        )
+    application_id = input("\nEnter application ID to delete: ").strip()
+    if not application_id.isdigit():
+        print("Invalid application ID.")
+        return
+    application_id = int(application_id)
+    success = delete_application(application_id)
+    if success:
+        print("Application deleted successfully.")
+    else:
+        print("Application ID not found.")
+
 def show_about():
     return (
         "Smart Job Application Tracker\n"
@@ -162,9 +188,11 @@ def main():
             print("Exiting the application.")
             break
         elif choice == "5":
+            delete_application_cli()
+        elif choice == "6":
             print(show_about())
         else:
-            print("Invalid choice. Enter between 1-5.")
+            print("Invalid choice. Enter between 1-6.")
 
 if __name__ == "__main__":
     main()
