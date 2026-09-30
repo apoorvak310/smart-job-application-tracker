@@ -28,7 +28,7 @@ def validate_date(date_str):
     if date == "":
         return None
     try:
-        date = datetime.strptime(date, "%d-%m-%Y")
+        date = datetime.strptime(date,"%Y-%m-%d")
         return date
     except ValueError:
         return False
