@@ -3,7 +3,9 @@ from database.schema import create_tables
 from services.application_service import (
     save_application,
     get_applications,
-    update_status, delete_application_by_id
+    update_status,
+    delete_application_by_id,
+    search
 )
 
 from util.validators import (
@@ -32,7 +34,8 @@ def show_menu():
     print("3. Update Application Status")
     print("4. Exit")
     print("5. Delete Application")
-    print("6. About\n")
+    print("6. About")
+    print("7. Search applications\n")
 
 
 def add_application():
@@ -209,13 +212,21 @@ def delete_application_cli():
     else:
         print("Application ID not found.")
 
+def search_applications_cli():
+    search_term = input("Enter search term: ").strip()
+    applications = search(search_term)
+    if len(applications) == 0:
+        print("No applications found.")
+    else:
+        print(f"Search results for '{search_term}':")
+        for application in applications:
+            application.display()
 
 def show_about():
     return (
         "Smart Job Application Tracker\n"
         "A Python CLI application for managing job applications.\n"
     )
-
 
 def main():
     # Make sure database tables exist
@@ -246,6 +257,9 @@ def main():
 
         elif choice == "6":
             print(show_about())
+
+        elif choice == "7":
+            search_applications_cli()
 
         else:
             print("Invalid choice. Enter between 1-6.")

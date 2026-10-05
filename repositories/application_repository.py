@@ -76,3 +76,16 @@ def delete_application(application_id):
     connection.commit()
     connection.close()
     return True
+
+def search_applications(search_term):
+    connection = get_connection()
+    cursor = connection.cursor()
+    search_pattern = f"%{search_term}%"
+    cursor.execute("SELECT * FROM applications WHERE company LIKE ? OR role LIKE ? OR location LIKE ? OR status LIKE ?",(search_pattern, search_pattern, search_pattern, search_pattern))
+    rows = cursor.fetchall()
+    connection.close()
+    return [row_to_application(row) for row in rows]
+
+results = search_applications("python")
+for application in results:
+    application.display()

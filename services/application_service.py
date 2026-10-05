@@ -1,4 +1,10 @@
-from repositories.application_repository import (add_application, get_all_applications, update_application_status)
+from repositories.application_repository import (
+    add_application,
+    get_all_applications, 
+    update_application_status, 
+    delete_application, 
+    search_applications
+    )
 from util.validators import validate_status
 def save_application(application):
     add_application(application)
@@ -11,3 +17,9 @@ def update_status(application_id, new_status):
     if validated_status is None:
         return False
     return update_application_status(application_id, validated_status)
+
+def delete_application_by_id(application_id):
+    return delete_application(application_id)
+
+def search(search_term):
+    return search_applications(search_term)
