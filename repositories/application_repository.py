@@ -86,6 +86,37 @@ def search_applications(search_term):
     connection.close()
     return [row_to_application(row) for row in rows]
 
-results = search_applications("python")
+def filter_by_status(status):
+    connection = get_connection()
+    cursor = connection.cursor()
+    cursor.execute(
+        "SELECT * FROM applications WHERE status = ?",
+        (status,)
+    )
+    rows = cursor.fetchall()
+    connection.close()
+    return [row_to_application(row) for row in rows]
+def sort_applications(sort_by, descending=False):
+    connection = get_connection()
+    cursor = connection.cursor()
+    sort_options = {
+        "company": "company",
+        "role": "role",
+        "date": "date_applied",
+        "salary": "salary",
+    }
+    column = sort_options.get(sort_by)
+    direction = "DESC" if descending else "ASC"
+    if column is None:
+        connection.close()
+        return []  # Invalid sort option
+    cursor.execute(
+        f"SELECT * FROM applications ORDER BY {column} {direction}"
+    )
+    rows = cursor.fetchall()
+    connection.close()
+    return [row_to_application(row) for row in rows]
+
+results = sort_applications("company")
 for application in results:
     application.display()

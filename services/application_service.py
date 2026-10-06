@@ -3,7 +3,9 @@ from repositories.application_repository import (
     get_all_applications, 
     update_application_status, 
     delete_application, 
-    search_applications
+    search_applications,
+    filter_by_status,
+    sort_applications
     )
 from util.validators import validate_status
 def save_application(application):
@@ -23,3 +25,11 @@ def delete_application_by_id(application_id):
 
 def search(search_term):
     return search_applications(search_term)
+
+def filter_status(status):
+    validated_status = validate_status(status)
+    if validated_status is None:
+        return []
+    return filter_by_status(validated_status)
+def sort_applications_service(sort_by,descending=False):
+    return sort_applications(sort_by,descending)

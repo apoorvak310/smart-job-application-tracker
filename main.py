@@ -5,7 +5,9 @@ from services.application_service import (
     get_applications,
     update_status,
     delete_application_by_id,
-    search
+    search,
+    filter_status,
+    sort_applications_service
 )
 
 from util.validators import (
@@ -26,7 +28,6 @@ def title():
     print(" " * 6 + "Smart Job Application System" + " " * 6)
     print("-" * 40)
 
-
 def show_menu():
     print()
     print("1. Add Application")
@@ -35,7 +36,9 @@ def show_menu():
     print("4. Exit")
     print("5. Delete Application")
     print("6. About")
-    print("7. Search applications\n")
+    print("7. Search applications")
+    print("8. Filter applications by status")
+    print("9. Sort applications")
 
 
 def add_application():
@@ -222,6 +225,41 @@ def search_applications_cli():
         for application in applications:
             application.display()
 
+def filter_applications_cli():
+    status = input("Enter status to filter by: ").strip()
+    applications = filter_status(status)
+    if len(applications) == 0:
+        print(f"No applications found with status '{status}'.")
+    else:
+        print(f"Applications with status '{status}':")
+        for application in applications:
+            application.display()
+
+def sort_applications_cli():
+    valid_sort_fields = ["company", "role", "date", "salary"]
+    sort_by = input(
+        "Enter field to sort by (company, role, date, salary): ").strip().lower()
+    if sort_by not in valid_sort_fields:
+        print("Invalid sort field. Please choose from company, role, date, or salary.")
+        return
+    descending_input = input(
+        "Order (Type Asc/Desc): ").strip().lower()
+    if descending_input == "desc":
+        descending = True
+    elif descending_input == "asc":
+        descending = False
+    else:
+        print("Invalid order. Please enter 'asc' or 'desc'.")
+        return
+    order = "descending" if descending else "ascending"
+    applications = sort_applications_service(sort_by, descending)
+    if len(applications) == 0:
+        print("No applications found.")
+    else:
+        print(f"Applications sorted by '{sort_by}' ({order}):")
+        for application in applications:
+            application.display()
+
 def show_about():
     return (
         "Smart Job Application Tracker\n"
@@ -260,9 +298,12 @@ def main():
 
         elif choice == "7":
             search_applications_cli()
-
+        elif choice == "8":
+            filter_applications_cli()
+        elif choice == "9":
+            sort_applications_cli()
         else:
-            print("Invalid choice. Enter between 1-6.")
+            print("Invalid choice. Enter between 1-9.")
 
 
 if __name__ == "__main__":
