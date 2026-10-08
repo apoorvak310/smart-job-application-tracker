@@ -1,5 +1,6 @@
 from database.schema import create_tables
 
+from models.user import User
 from services.application_service import (
     save_application,
     get_applications,
@@ -22,7 +23,7 @@ from util.validators import (
 )
 
 from models.application import Application
-
+from services.user_service import save_user, get_all_users
 
 def title():
     print("-" * 40)
@@ -40,6 +41,8 @@ def show_menu():
     print("7. Search applications")
     print("8. Filter applications by status")
     print("9. Sort applications")
+    print("10. Create User Profile")
+    print("11. View User Profiles")
 
 
 def add_application():
@@ -261,6 +264,29 @@ def sort_applications_cli():
         for application in applications:
             application.display()
 
+def create_user_profile():
+    name = input("Enter your name: ").strip()
+    email = input("Enter your email: ").strip()
+    phone = input("Enter your phone: ").strip()
+    education = input("Enter your education: ").strip()
+    user = User(name=name, email=email,phone=phone,education=education)
+    save_user(user)
+    print("User profile created successfully.")
+
+def view_user_profiles():
+    users = get_all_users()
+    if len(users) == 0:
+        print("No user profiles found.")
+        return
+    for user in users:
+        print("-" * 40)
+        print(f"ID: {user[0]}")
+        print(f"Name: {user[1]}")
+        print(f"Email: {user[2]}")
+        print(f"Phone: {user[3]}")
+        print(f"Education: {user[4]}")
+        print("-" * 40)
+
 def show_about():
     return (
         "Smart Job Application Tracker\n"
@@ -275,22 +301,16 @@ def main():
 
     while True:
         show_menu()
-
         choice = input("Enter your choice: ").strip()
-
         if choice == "1":
             add_application()
-
         elif choice == "2":
             view_applications()
-
         elif choice == "3":
             update_application_status()
-
         elif choice == "4":
             print("Exiting the application.")
             break
-
         elif choice == "5":
             delete_application_cli()
 
@@ -303,8 +323,12 @@ def main():
             filter_applications_cli()
         elif choice == "9":
             sort_applications_cli()
+        elif choice == "10":
+            create_user_profile()
+        elif choice == "11":
+            view_user_profiles()
         else:
-            print("Invalid choice. Enter between 1-9.")
+            print("Invalid choice. Enter between 1-10.")
 
 
 if __name__ == "__main__":
