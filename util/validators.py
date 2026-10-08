@@ -17,6 +17,13 @@ VALID_WORK_MODES = [
     "On-site"
 ]
 
+VALID_SORT_FIELDS = {
+    "company": "company",
+    "role": "role",
+    "date": "date_applied",
+    "salary": "salary"
+}
+
 def validate_required(s):
     if s.strip():
         return True

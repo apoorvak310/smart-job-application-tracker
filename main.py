@@ -17,7 +17,8 @@ from util.validators import (
     validate_work_mode,
     validate_job_url,
     validate_location,
-    validate_notes
+    validate_notes,
+    VALID_SORT_FIELDS
 )
 
 from models.application import Application
@@ -236,10 +237,10 @@ def filter_applications_cli():
             application.display()
 
 def sort_applications_cli():
-    valid_sort_fields = ["company", "role", "date", "salary"]
+    
     sort_by = input(
         "Enter field to sort by (company, role, date, salary): ").strip().lower()
-    if sort_by not in valid_sort_fields:
+    if sort_by not in VALID_SORT_FIELDS:
         print("Invalid sort field. Please choose from company, role, date, or salary.")
         return
     descending_input = input(
