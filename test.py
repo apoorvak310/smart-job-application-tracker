@@ -1,9 +1,10 @@
 from models.user import User
 user = User(
-    'Apoorva',
-    'apoorva@gmail.com',
-    '98787867656',
-    'B.Tech'
+    id=1,
+    name='Apoorva',
+    email='apoorva@gmail.com',
+    phone='98787867656',
+    education='B.Tech'
 )
 res = user.display()
 print(res)

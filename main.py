@@ -19,11 +19,13 @@ from util.validators import (
     validate_job_url,
     validate_location,
     validate_notes,
-    VALID_SORT_FIELDS
+    VALID_SORT_FIELDS,
+    validate_email,
+    validate_phone, 
 )
 
 from models.application import Application
-from services.user_service import save_user, get_all_users
+from services.user_service import save_user, get_users, edit_user, remove_user
 
 def title():
     print("-" * 40)
@@ -43,6 +45,8 @@ def show_menu():
     print("9. Sort applications")
     print("10. Create User Profile")
     print("11. View User Profiles")
+    print("12. Update User Profile")
+    print("13. Delete User Profile")
 
 
 def add_application():
@@ -269,23 +273,126 @@ def create_user_profile():
     email = input("Enter your email: ").strip()
     phone = input("Enter your phone: ").strip()
     education = input("Enter your education: ").strip()
+    email = validate_email(email)
+    if email is None:
+        print("Email cannot be empty.")
+        return
+    elif email is False:
+        print("Invalid email address.")
+        return
+    phone = validate_phone(phone)
+    if phone is None:
+        print("Phone number cannot be empty.")
+        return
+    elif phone is False:
+        print("Invalid phone number.")
+        return
     user = User(name=name, email=email,phone=phone,education=education)
     save_user(user)
     print("User profile created successfully.")
 
 def view_user_profiles():
-    users = get_all_users()
+    users = get_users()
     if len(users) == 0:
         print("No user profiles found.")
         return
     for user in users:
         print("-" * 40)
-        print(f"ID: {user[0]}")
-        print(f"Name: {user[1]}")
-        print(f"Email: {user[2]}")
-        print(f"Phone: {user[3]}")
-        print(f"Education: {user[4]}")
+        #print(f"ID: {user.id}")
+        print(f"Name: {user.name}")
+        print(f"Email: {user.email}")
+        print(f"Phone: {user.phone}")
+        print(f"Education: {user.education}")
         print("-" * 40)
+
+def update_user_profile():
+    users = get_users()
+    if not users:
+        print("No user profiles found.")
+        return
+    print("\n---User Profiles---")
+    for user in users:
+        print(f"ID: {user.id} | Name : {user.name} | Email: {user.email}")
+    try:
+        user_id = int(input("Enter ID of the profile to update: "))
+    except ValueError:
+        print("Please enter a valid numeric ID.")
+        return
+    user = next((u for u in users if u.id == user_id),None)
+    if user is None:
+        print("User profile not found.")
+        return
+    print("Press enter to keep the existing value.")
+    name = input(f"Name [{user.name}]: ").strip()
+    email = input(f"Email [{user.email}]: ").strip()
+    phone = input(f"Phone [{user.phone}]: ").strip()
+    education = input(f"Education [{user.education}]: ").strip()
+
+    user.name = name or user.name
+    email = email or user.email
+    phone = phone or user.phone
+    education = education or user.education
+
+    email = validate_email(email)
+    if email is None:
+        print("Email cannot be empty.")
+        return
+    elif email is False:
+        print("Invalid email address.")
+        return
+
+    phone = validate_phone(phone)
+    if phone is None:
+        print("Phone number cannot be empty.")
+        return
+    elif phone is False:
+        print("Invalid phone number.")
+        return
+
+    user.email = email
+    user.phone = phone
+    user.education = education
+
+    try:
+        updated = edit_user(user)
+    except Exception as error:
+        print(f"Could not update profile: {error}")
+        return
+
+    if updated:
+        print("User profile updated successfully.")
+    else:
+        print("No profile was updated.")
+
+def delete_user_profile():
+    users = get_users()
+    if len(users) == 0:
+        print("No user profiles found.")
+        return
+    for user in users:
+        print(f"ID: {user.id} | Name : {user.name} | Email: {user.email}")
+    try:
+        user_id = int(input("Enter the user's ID to delete: "))
+    except ValueError:
+        print("Enter a valid ID")
+        return
+    
+    if any(user.id == user_id for user in users):
+        yes = input(
+            "Confirm deleting the user. Once deleted you cannot get it back. (y/n) "
+        ).strip().lower()
+
+        if yes == "y":
+            confirm = remove_user(user_id)
+            if confirm:
+                print("User profile deleted successfully.")
+            else:
+                print("Could not delete user profile.")
+        else:
+            print("Deletion cancelled.")
+    else:
+        print("The user profile does not exist.")
+
 
 def show_about():
     return (
@@ -327,6 +434,10 @@ def main():
             create_user_profile()
         elif choice == "11":
             view_user_profiles()
+        elif choice == "12":
+            update_user_profile()
+        elif choice == "13":
+            delete_user_profile()
         else:
             print("Invalid choice. Enter between 1-10.")
 

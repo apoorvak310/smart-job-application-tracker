@@ -1,4 +1,5 @@
 from datetime import datetime
+import re
 from urllib.parse import urlparse
 
 VALID_STATUSES = [
@@ -81,3 +82,18 @@ def validate_notes(notes):
     if nts == "":
         return None
     return nts
+def validate_email(email):
+    email = email.strip()
+    if email == "":
+        return None
+    pattern = r"^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$"
+    if re.fullmatch(pattern, email):
+        return email
+    return None
+def validate_phone(phone):
+    phone = phone.strip()
+    if phone == "":
+        return None
+    if (phone.isdigit() and len(phone) == 10) and (phone[0] in "6789"):
+        return phone
+    return False

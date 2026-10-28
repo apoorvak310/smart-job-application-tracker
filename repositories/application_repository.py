@@ -7,6 +7,7 @@
 from datetime import datetime
 from models.application import Application
 from database.connection import get_connection
+from util.validators import VALID_SORT_FIELDS
 def format_date(date):
     if date is None:
         return None
@@ -99,13 +100,7 @@ def filter_by_status(status):
 def sort_applications(sort_by, descending=False):
     connection = get_connection()
     cursor = connection.cursor()
-    sort_options = {
-        "company": "company",
-        "role": "role",
-        "date": "date_applied",
-        "salary": "salary",
-    }
-    column = sort_options.get(sort_by)
+    column = VALID_SORT_FIELDS.get(sort_by)
     direction = "DESC" if descending else "ASC"
     if column is None:
         connection.close()
@@ -117,6 +112,3 @@ def sort_applications(sort_by, descending=False):
     connection.close()
     return [row_to_application(row) for row in rows]
 
-results = sort_applications("company")
-for application in results:
-    application.display()

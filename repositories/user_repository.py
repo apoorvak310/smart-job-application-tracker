@@ -23,4 +23,31 @@ def get_all_users():
     cursor.execute("SELECT * FROM users")
     rows = cursor.fetchall()
     connection.close()
-    return rows
+    return [row_to_user(row) for row in rows]
+
+def row_to_user(row):
+    user = User(
+        id=row[0],
+        name=row[1],
+        email=row[2],
+        phone=row[3],
+        education=row[4]
+    )
+    return user
+def update_user(user):
+    connection = get_connection()
+    cursor = connection.cursor()
+    cursor.execute("""
+    update users set name = ?,email=?,phone=?,education=? where id = ?
+    """,(user.name, user.email, user.phone, user.education, user.id))
+    connection.commit()
+
+def delete_user(user_id):
+    connection = get_connection()
+    cursor = connection.cursor()
+    cursor.execute("""
+    delete from users where id=?""",(user_id,))
+    cnt = cursor.rowcount
+    connection.commit()
+    connection.close()
+    return cnt > 0
