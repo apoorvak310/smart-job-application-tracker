@@ -26,6 +26,7 @@ from util.validators import (
 
 from models.application import Application
 from services.user_service import save_user, get_users, edit_user, remove_user
+from services.skill_service import save_skill, view_skills
 
 def title():
     print("-" * 40)
@@ -47,6 +48,8 @@ def show_menu():
     print("11. View User Profiles")
     print("12. Update User Profile")
     print("13. Delete User Profile")
+    print("14. Add a Skill")
+    print("15. View Your Skills")
 
 
 def add_application():
@@ -393,6 +396,50 @@ def delete_user_profile():
     else:
         print("The user profile does not exist.")
 
+def add_skills_to_profile():
+    users = get_users()
+    if len(users) == 0:
+        print("No users found.")
+        return
+    for user in users:
+        print(f"ID: {user.id} | Name: {user.name}")
+    try:
+        user_id = int(input("Enter the user's id to add the skill: "))
+    except ValueError:
+        print("Enter a valid ID.")
+        return
+    if any(user.id == user_id for user in users):
+        skill = input("Enter the skill: ").strip()
+        if len(skill) == 0:
+            print("Enter a valid skill.")
+            return
+        save_skill(user_id,skill)
+        print(skill,"added successfully.")
+    else:
+        print("No user with",user_id,"exists")
+        return
+
+def view_user_skills():
+    users = get_users()
+    if len(users) == 0:
+        print("No user found.")
+        return
+    for user in users:
+        print(f"ID: {user.id} | Name: {user.name}")
+    try:
+        user_id = int(input("Enter the user's id to View the skills: "))
+    except ValueError:
+        print("Enter a valid ID.")
+        return
+    if any(user.id == user_id for user in users):
+        print("\nSkills:\n")
+        skills = view_skills(user_id)
+        if len(skills) == 0:
+            print("No skills added to this profile yet.")
+        for skill in skills:
+            print(skill[2])
+    else:
+        print("No user with this ID exists.")
 
 def show_about():
     return (
@@ -438,8 +485,12 @@ def main():
             update_user_profile()
         elif choice == "13":
             delete_user_profile()
+        elif choice == "14":
+            add_skills_to_profile()
+        elif choice == "15":
+            view_user_skills()
         else:
-            print("Invalid choice. Enter between 1-10.")
+            print("Invalid choice. Enter between 1-15.")
 
 
 if __name__ == "__main__":

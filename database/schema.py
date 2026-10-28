@@ -32,5 +32,11 @@ def create_tables():
         )
     """)
 
+    cursor.execute("""create table if not exists skills 
+    (id integer primary key, user_id integer not null,
+    skill_name text not null, 
+    foreign key (user_id) references users(id),
+    unique(user_id, skill_name));""")
+
     connection.commit()
     connection.close()
