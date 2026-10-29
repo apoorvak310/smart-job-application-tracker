@@ -3,4 +3,5 @@
 import sqlite3
 def get_connection(): #handles the connection. when called
     connection = sqlite3.connect("data/job_tracker.db")
+    connection.execute("PRAGMA foreign_keys = ON")
     return connection

@@ -410,13 +410,16 @@ def add_skills_to_profile():
         return
     if any(user.id == user_id for user in users):
         skill = input("Enter the skill: ").strip()
-        if len(skill) == 0:
+        if not skill:
             print("Enter a valid skill.")
             return
-        save_skill(user_id,skill)
-        print(skill,"added successfully.")
+        success = save_skill(user_id,skill)
+        if success:
+            print(f"'{skill}' added successfully.")
+        else:
+            print(f"'{skill}' already exists in this profile.")
     else:
-        print("No user with",user_id,"exists")
+        print(f"No user with{user_id}exists")
         return
 
 def view_user_skills():
